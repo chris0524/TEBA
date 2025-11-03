@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings>
+<mapping>
+<method name="Query_list">
+<parameter index="0" mappedName="enterorg" />
+<parameter index="1" mappedName="useunit" />
+<parameter index="2" mappedName="place1" />
+<parameter index="3" mappedName="keepunit" />
+<parameter index="4" mappedName="keeper" />
+<parameter index="5" mappedName="userno" />
+<parameter index="6" mappedName="propertyno" />
+<parameter index="7" mappedName="Chktype" />
+<parameter index="8" mappedName="AuthCode" />
+</method> 
+<method name="Query_list1">
+<parameter index="0" mappedName="enterorg" />
+<parameter index="1" mappedName="useunit" />
+<parameter index="2" mappedName="place1" />
+<parameter index="3" mappedName="keepunit" />
+<parameter index="4" mappedName="keeper" />
+<parameter index="5" mappedName="userno" />
+<parameter index="6" mappedName="propertyno" />
+<parameter index="7" mappedName="Chktype" />
+<parameter index="8" mappedName="PageIndex" />
+<parameter index="9" mappedName="AuthCode" />
+</method>
+</mapping>
+</mappings>

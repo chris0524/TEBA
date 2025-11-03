@@ -1,0 +1,1 @@
+net use z: \\172.16.30.55\專案工作區\property CHANGE_PASSWORD /user:kduser

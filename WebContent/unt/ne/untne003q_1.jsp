@@ -1,0 +1,312 @@
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="../../home/head.jsp" %>
+<script type="text/javascript" src="../../js/function.js"></script>
+
+<%
+unt.ne.UNTNE001Q untneAddProofQuery = (unt.ne.UNTNE001Q)request.getAttribute("UNTNE001Q");
+%>
+<script type="text/javascript" src="../../js/jquery-1.8.2.js"></script>
+<script type="text/javascript" src="../../js/DataCouplingCtrl.js?v=2.0"></script>
+<script language="javascript">
+
+$(function() {
+	var dcc1 = new DataCouplingCtrlPlus(form1.q_enterOrg, form1.q_keepUnitQuickly, form1.q_keepUnit, form1.q_useUnitQuickly, form1.q_useUnit, false, false);
+	var dcc2 = new DataCouplingCtrlPlus(form1.q_enterOrg, form1.q_keeperQuickly, form1.q_keeper, form1.q_userNoQuickly, form1.q_userNo, false, false);
+	if ('<%=user.getRoleid()%>' == '1'){		
+		form1.q_keeper.disabled = true;
+		form1.btn_q_keeper2.disabled = true;
+		readbg="#EEEEEE";
+		setFormItem("q_keeperQuickly","R");
+	}	
+}); 
+
+function changeAll(){
+//	changeEnterOrg_FundType(form1.q_enterOrg.value,'<%=user.getOrganID()%>','q_fundType','','<%=user.getIsAdminManager()%>','<%=user.getIsOrganManager()%>');
+//	changeBureau(form1.q_enterOrg, form1.q_keepBureau, '');
+//	changeBureau(form1.q_enterOrg, form1.q_useBureau, '');
+//	changeKeepUnit(form1.q_enterOrg, form1.q_keepBureau, form1.q_keepUnit,'');
+//	changeKeepUnit(form1.q_enterOrg, form1.q_useBureau, form1.q_useUnit,'');
+//	getKeeper(form1.q_enterOrg, form1.q_keepUnit, form1.q_keeper, '','N');
+//	getKeeper(form1.q_enterOrg, form1.q_useUnit, form1.q_userNo, '','N');
+}
+function openManWindow(){
+
+	var prop="";
+	var windowTop=(document.body.clientHeight-400)/2+180;
+	var windowLeft=(document.body.clientWidth-400)/2+250;
+	prop=prop+"width=750,height=500,";
+	prop=prop+"top="+windowTop+",";
+	prop=prop+"left="+windowLeft+",";
+	prop=prop+"scrollbars=no";
+	returnWindow=window.open("../../sys/ca/sysca004f.jsp","",prop);
+}
+function openUnitWindow(){
+
+	var prop="";
+	var windowTop=(document.body.clientHeight-400)/2+180;
+	var windowLeft=(document.body.clientWidth-400)/2+250;
+	prop=prop+"width=750,height=500,";
+	prop=prop+"top="+windowTop+",";
+	prop=prop+"left="+windowLeft+",";
+	prop=prop+"scrollbars=no";
+	returnWindow=window.open("../../sys/ca/sysca003f.jsp","",prop);
+}
+function queryPlaceName(queryEnterOrg, queryPlace){
+	//傳送JSON
+	var comment={};	
+	comment.enterOrg = document.all.item(queryEnterOrg).value;
+	comment.place = document.all.item(queryPlace).value;
+	
+	$.post('../ch/queryPlaceName.jsp',
+		comment,
+		function(data){
+			//將回傳資料寫入
+			data=eval('('+data+')');
+
+			$("input[name='" + queryPlace + "Name']").val(data['placeName']);
+			
+		});	
+}
+function clearInsertKey() {
+	$("input[name='i_enterOrg']").val("");
+	$("input[name='i_ownership']").val("");
+	$("input[name='i_caseNo']").val("");
+	$("input[name='i_differenceKind']").val("");
+}
+function clearQueryOneKey() {
+	$("input[name='queryone_enterOrg']").val("");
+	$("input[name='queryone_ownership']").val("");
+	$("input[name='queryone_caseNo']").val("");
+	$("input[name='queryone_differenceKind']").val("");
+}
+//分頁初始化
+function clearPage() {
+	$("input[name='pageSize1']").val("");
+	$("input[name='totalPage1']").val("");
+	$("input[name='currentPage1']").val("");
+	$("input[name='totalRecord1']").val("");
+	$("input[name='recordStart1']").val("");
+	$("input[name='recordEnd1']").val("");
+	$("input[name='totalPage']").val("0");
+	$("input[name='currentPage']").val("1");
+	$("input[name='totalRecord']").val("0");
+	$("input[name='recordStart']").val("0");
+	$("input[name='recordEnd']").val("0");
+}
+</script>
+
+<!--Query區============================================================-->
+<table class="queryTable"  border="1">
+	<tr style="display:none;">
+	  <td class="queryTDInput" colspan="4">
+	  <input name="querySelect" type="radio" class="field_Q" value="addProof" <%=untneAddProofQuery.getQueryType1()%>>
+      &nbsp;<font color="green">查詢增加單</font>&nbsp;&nbsp;&nbsp;	
+	  <input name="querySelect" type="radio" class="field_Q" value="nonexp"<%=untneAddProofQuery.getQueryType2()%>>
+	  &nbsp;<font color="green">查詢基本資料</font>&nbsp;&nbsp;&nbsp;	
+	  <input name="querySelect" type="radio" class="field_Q" value="nonexpDetail" <%=untneAddProofQuery.getQueryType3()%>  checked="checked">
+      &nbsp;<font color="green">查詢物品明細資料</font>
+	  </td>
+	  </tr>
+	<tr>
+		<td class="queryTDLable" >入帳機關：</td>
+        <td class="queryTDInput" >
+	  		<%=util.View.getPopOrgan("field_RO","q_enterOrg","Y".equals(user.getIsAdminManager())  ? "" : untneAddProofQuery.getOrganID(),"Y".equals(user.getIsAdminManager())  ? "" :untneAddProofQuery.getQ_enterOrgName(),"N")%>
+	    </td>
+		<td class="queryTDLable"><div align="right">權屬：</div>
+        <td class="queryTDInput">
+	      	<select class="field_Q" type="select" name="q_ownership">
+	          <%=util.View.getOnwerOption(untneAddProofQuery.getQ_ownership())%>
+	        </select>
+	    </td>
+	</tr>
+	<tr>
+		<td class="queryTDLable"style="display:none;">電腦單號：</td>
+		<td class="queryTDInput"style="display:none;">
+			  起<input class="field_Q" type="text" name="q_caseNoS" size="12" maxlength="10" value="<%=untneAddProofQuery.getQ_caseNoS()%>">&nbsp;~&nbsp;
+			  訖<input class="field_Q" type="text" name="q_caseNoE" size="12" maxlength="10" value="<%=untneAddProofQuery.getQ_caseNoE()%>">
+		</td>
+		<td class="queryTDLable">入帳日期：</td>
+		<td class="queryTDInput"colspan="3">
+			起<%=util.View.getPopCalndar("field_Q","q_enterDateS",untneAddProofQuery.getQ_enterDateS())%>&nbsp;~&nbsp;
+			訖<%=util.View.getPopCalndar("field_Q","q_enterDateE",untneAddProofQuery.getQ_enterDateE())%>
+		</td>
+    </tr>
+	<tr>
+		<td class="queryTDLable">物品編號：</td>
+		<td colspan="3" class="queryTDInput">
+			起<input class="field_Q" type="text" name="q_propertyNoS" size="12" maxlength="12" value="<%=untneAddProofQuery.getQ_propertyNoS()%>" onChange="getProperty('q_propertyNoS','q_propertyNoSName','','NE')">
+			<input class="field_Q" type="button" name="btn_q_propertyNoS" onclick="popProperty('q_propertyNoS','q_propertyNoSName','6')" value="..." title="財產編號輔助視窗">
+			[<input class="field_QRO" type="text" name="q_propertyNoSName" size="20" maxlength="50" value="<%=untneAddProofQuery.getQ_propertyNoSName()%>">]&nbsp;~&nbsp;
+			訖<input class="field_Q" type="text" name="q_propertyNoE" size="12" maxlength="12" value="<%=untneAddProofQuery.getQ_propertyNoE()%>" onChange="getProperty('q_propertyNoE','q_propertyNoEName','','NE')">
+			<input class="field_Q" type="button" name="btn_q_propertyNoE" onclick="popProperty('q_propertyNoE','q_propertyNoEName','6')" value="..." title="財產編號輔助視窗">
+			[<input class="field_QRO" type="text" name="q_propertyNoEName" size="20" maxlength="50" value="<%=untneAddProofQuery.getQ_propertyNoEName()%>">]
+		</td>
+	</tr>
+	<tr>
+		<td class="queryTDLable">物品分號：</td>
+		<td class="queryTDInput"> 起
+			<input class="field_Q" type="text" name="q_serialNoS" size="7" maxlength="7" value="<%=untneAddProofQuery.getQ_serialNoS()%>" onChange="addChar(this ,7);">
+			&nbsp;~&nbsp;訖
+			<input class="field_Q" type="text" name="q_serialNoE" size="7" maxlength="7" value="<%=untneAddProofQuery.getQ_serialNoE()%>" onChange="addChar(this ,7);">
+ 			批號：          
+ 			<input class="field_Q" type="text" name="q_lotNo" size="7" maxlength="7" value="<%=untneAddProofQuery.getQ_lotNo()%>">
+		</td>
+		<td class="queryTDLable"><div align="right">資料狀態：</div></td>
+		<td class="queryTDInput">
+			<select class="field_Q" type="select" name="q_dataState">
+				<%=util.View.getTextOption("1;現存;2;已減損",untneAddProofQuery.getQ_dataState())%>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td class="queryTDLable">原物品分號：</td>
+		<td class="queryTDInput"> 起
+			<input class="field_Q" type="text" name="q_oldSerialNoS" size="20" maxlength="30" value="<%=untneAddProofQuery.getQ_oldSerialNoS()%>">
+			&nbsp;~&nbsp;訖
+			<input class="field_Q" type="text" name="q_oldSerialNoE" size="20" maxlength="30" value="<%=untneAddProofQuery.getQ_oldSerialNoE()%>">
+		</td>
+		<td class="queryTDLable">物品區分別：</td>
+		<td class="queryTDInput">
+		<%=util.View._getSelectHTML("field_Q", "q_differenceKind", untneAddProofQuery.getQ_differenceKind(),"DFK") %>	
+		</td>
+	</tr>
+	<tr>
+		<td class="queryTDLable">原批號：</td>
+		<td class="queryTDInput" colspan="3">
+			起 <input class="field_Q" type="text" name="q_oldlotNoS" size="10" maxlength="30" value="<%=untneAddProofQuery.getQ_oldlotNoS()%>">&nbsp;~&nbsp; 
+			訖 <input class="field_Q" type="text" name="q_oldlotNoE" size="10" maxlength="30" value="<%=untneAddProofQuery.getQ_oldlotNoE()%>">
+		</td>
+	</tr>
+	<tr>
+		<td class="queryTDLable">物品別名：</td>
+		<td class="queryTDInput" colspan="3"> 
+			<input class="field_Q" type="text" name="q_propertyName1" size="25" maxlength="25" value="<%=untneAddProofQuery.getQ_propertyName1()%>">
+		</td>
+	</tr>
+	<tr>
+		<td class="queryTDLable">購置日期：</td>
+		<td class="queryTDInput" colspan="3">
+			起<%=util.View.getPopCalndar("field_Q","q_buyDateS",untneAddProofQuery.getQ_buyDateS())%>&nbsp;~&nbsp;
+			訖<%=util.View.getPopCalndar("field_Q","q_buyDateE",untneAddProofQuery.getQ_buyDateE())%>
+		</td>		
+	</tr>    
+	<tr>
+		<td class="queryTDLable">物品性質：</td>
+		<td class="queryTDInput">
+			<select class="field_Q" type="select" name="q_propertyKind">
+				<%=util.View.getOption("select codeID, codeName from SYSCA_Code where codeKindID='PKD' ",untneAddProofQuery.getQ_propertyKind())%>
+			</select>
+		</td>
+		<td class="queryTDLable">基金物品：</td>
+		<td class="queryTDInput">
+			<%=util.View._getSelectHTML_withEnterOrg("field_Q", "q_fundType", untneAddProofQuery.getQ_fundType(),"FUD", untneAddProofQuery.getQ_enterOrg()) %>
+		<input class="field_Q" type="hidden" name="q_valuable" value="">
+		</td>
+	</tr>
+	<tr>
+		<td class="queryTDLable"><div align="right">填單日期：</div></td>
+		<td class="queryTDInput" colspan="3">
+			起<%=util.View.getPopCalndar("field_Q","q_writeDateS",untneAddProofQuery.getQ_writeDateS())%>&nbsp;~&nbsp;
+			訖<%=util.View.getPopCalndar("field_Q","q_writeDateE",untneAddProofQuery.getQ_writeDateE())%>
+		</td>
+	</tr>
+	<tr>
+	    <td class="queryTDLable"><div align="right">物品來源：</div></td>
+		<td class="queryTDInput" colspan="3">
+			<%=util.View.getSourceKind("field_Q","q_sourceKind",untneAddProofQuery.getQ_sourceKind(),untneAddProofQuery.getQ_sourceKindName())%>
+		</td>
+	</tr>
+<!-- 		<td class="queryTDLable"><div align="right">增加原因：</div></td> -->
+<!-- 		<td class="queryTDInput" colspan="3"> -->
+<!-- 			<select class="field_Q" type="select" name="q_cause"> -->
+<%-- 				<%=util.View.getOption("select  codeID, codeName from SYSCA_Code where codeKindID='CAA' and codecon1 in (1,4)", untneAddProofQuery.getQ_cause())%> --%>
+<!-- 			</select> -->
+<!-- 		</td> -->
+	<tr>
+		<td class="queryTDLable">增加單編號：</td>
+		<td class="queryTDInput"  colspan="3">
+			<input class="field_Q" type="text" name="q_proofYear" size="3" value="<%=untneAddProofQuery.getQ_proofYear()%>">
+			年
+			<input class="field_Q" type="text" name="q_proofDoc" size="10" maxlength="20" value="<%=untneAddProofQuery.getQ_proofDoc()%>">
+			字
+			起<input class="field_Q" type="text" name="q_proofNoS" size="10" maxlength="20" value="<%=untneAddProofQuery.getQ_proofNoS()%>" onChange="addChar(this ,7);">&nbsp;~&nbsp;
+			訖<input class="field_Q" type="text" name="q_proofNoE" size="10" maxlength="20" value="<%=untneAddProofQuery.getQ_proofNoE()%>" onChange="addChar(this ,7);">號
+		</td>
+	</tr>
+	<tr>
+		<td class="td_form">保管使用資料：</td>
+		<td class="td_form_white" colspan="3">
+			保管單位
+				<%=View.getSelectCtrlGroup("select unitno, unitname from UNTMP_KEEPUNIT where enterorg = '" + untneAddProofQuery.getQ_enterOrg() + "' order by unitno ", 
+			                                                        "field_Q", "form1", "q_keepUnit", "form1.q_useUnit.value = this.value;form1.q_useUnit.onchange();",
+			                                                        "q_keepUnitQuickly", "", untneAddProofQuery.getQ_keepUnit()) %>
+				<input class="field_Q" type="button" name="btn_q_keepUnit" onclick="popUnitNo(form1.organID.value,'q_keepUnit')" value="..." title="單位輔助視窗">
+				&nbsp;&nbsp;&nbsp;保管人
+				<%if("1".equals(user.getRoleid())){ %>
+				<%=View.getSelectCtrlGroup("select a.keeperno, CASE a.incumbencyyn WHEN 'N' THEN a.keepername + '(停用)' ELSE a.keepername END AS keepername from UNTMP_KEEPER a LEFT OUTER JOIN SYSAP_EMP b ON a.enterorg = b.organid AND a.keeperno = b.empid where 1=1 and enterorg = '" + untneAddProofQuery.getQ_enterOrg()  + "' order by case a.incumbencyyn when 'Y' then 'Y' else 'N' end DESC,convert(varchar,keepername) ", 
+			                                                       "field_Q", "form1", "q_keeper", "form1.q_userNo.value = this.value;form1.q_userNo.onchange();", 
+			                                                       "q_keeperQuickly", "", user.getKeeperno()) %>
+		        <%}else{ %>
+		        <%=View.getSelectCtrlGroup("select a.keeperno, CASE a.incumbencyyn WHEN 'N' THEN a.keepername + '(停用)' ELSE a.keepername END AS keepername from UNTMP_KEEPER a LEFT OUTER JOIN SYSAP_EMP b ON a.enterorg = b.organid AND a.keeperno = b.empid where 1=1 and enterorg = '" + untneAddProofQuery.getQ_enterOrg()  + "' order by case a.incumbencyyn when 'Y' then 'Y' else 'N' end DESC,convert(varchar,keepername) ", 
+			                                                       "field_Q", "form1", "q_keeper", "form1.q_userNo.value = this.value;form1.q_userNo.onchange();", 
+			                                                       "q_keeperQuickly", "", untneAddProofQuery.getQ_keeper()) %>
+				<%} %>
+		        <input class="field_Q" type="button" name="btn_q_keeper2" onclick="popUnitMan(form1.organID.value,'q_keeper')" value="..." title="人員輔助視窗">
+				<br>
+				使用單位
+				<%=View.getSelectCtrlGroup("select unitno, unitname from UNTMP_KEEPUNIT where enterorg = '" + untneAddProofQuery.getQ_enterOrg() + "' order by unitno ", 
+				                                                       "field_Q", "form1", "q_useUnit", "form1.q_keepUnit.value = this.value;form1.q_keepUnit.onchange();", 
+				                                                       "q_useUnitQuickly", "", untneAddProofQuery.getQ_useUnit()) %>
+				<input class="field_Q" type="button" name="btn_q_useUnit" onclick="popUnitNo(form1.organID.value,'q_useUnit')" value="..." title="單位輔助視窗">
+				&nbsp;&nbsp;&nbsp;使用人
+				<%=View.getSelectCtrlGroup("select a.keeperno, CASE a.incumbencyyn WHEN 'N' THEN a.keepername + '(停用)' ELSE a.keepername END AS keepername from UNTMP_KEEPER a LEFT OUTER JOIN SYSAP_EMP b ON a.enterorg = b.organid AND a.keeperno = b.empid where 1=1 and enterorg = '" +untneAddProofQuery.getQ_enterOrg() + "' order by case a.incumbencyyn when 'Y' then 'Y' else 'N' end DESC,convert(varchar,keepername) ", 
+			                                                       "field_Q", "form1", "q_userNo", "q_userNoQuickly", untneAddProofQuery.getQ_userNo()) %>
+				<input class="field_Q" type="button" name="btn_q_userNo" onclick="popUnitMan(form1.organID.value,'q_userNo')" value="..." title="人員輔助視窗">
+				<br/>
+				使用註記：
+				<input class="field_Q" type="text" name="q_userNote" value="<%=untneAddProofQuery.getQ_userNote() %>" size="20">
+				<br>
+				存置地點
+				<input class="field_Q" type="text" name="q_place1" size="10" maxlength="10" value="<%=untneAddProofQuery.getQ_place1()%>" onchange="queryPlaceName('q_enterOrg','q_place1');">
+				<input class="field_Q" type="button" name="btn_q_place" onclick="popPlace(form1.organID.value,'q_place1','q_place1Name')" value="..." title="存置地點輔助視窗">
+			    [<input class="field_RO" type="text" name="q_place1Name" size="20" maxlength="20" value="<%=untneAddProofQuery.getQ_place1Name()%>">]
+				<br>		
+				存置地點說明
+				<input class="field_Q" type="text" name="q_place" size="30" maxlength="30" value="<%=untneAddProofQuery.getQ_place()%>">		
+		</td>
+	</tr>
+	<tr>
+		<td class="queryTDLable">備註：</td>
+	    <td class="queryTDInput" colspan="3">
+	    	<input class="field_Q"  type="text" name="q_notes"  value="<%=untneAddProofQuery.getQ_notes()%>" size="30">
+		</td>
+	</tr>
+	<tr>
+		<td class="queryTDInput" colspan="4" style="text-align:center;">
+			<input class="toolbar_default" followPK="false" type="submit" name="querySubmit" value="確　　定" onClick="clearInsertKey();clearQueryOneKey();clearPage();">
+			<input class="toolbar_default" followPK="false" type="button" name="queryCannel" value="取　　消" onClick="whatButtonFireEvent(this.name)">
+		</td>
+	</tr>
+			<input class="field_Q" type="hidden" name="queryone_enterOrg" value="<%=untneAddProofQuery.getQueryone_enterOrg()%>">
+			<input class="field_Q" type="hidden" name="queryone_ownership" value="<%=untneAddProofQuery.getQueryone_ownership()%>">
+			<input class="field_Q" type="hidden" name="queryone_caseNo" value="<%=untneAddProofQuery.getQueryone_caseNo()%>">
+			<input class="field_Q" type="hidden" name="queryone_differenceKind" value="<%=untneAddProofQuery.getQueryone_differenceKind()%>">	
+	<tr style="display='none'">
+		<td class="queryTDInput" colspan="4" style="text-align:center;">
+			<input class="field_Q" type="hidden" name="i_enterOrg" value="<%=untneAddProofQuery.getI_enterOrg()%>">
+			<input class="field_Q" type="hidden" name="i_ownership" value="<%=untneAddProofQuery.getI_ownership()%>">
+			<input class="field_Q" type="hidden" name="i_caseNo" value="<%=untneAddProofQuery.getI_caseNo()%>">
+			<input class="field_Q" type="hidden" name="i_differenceKind" value="<%=untneAddProofQuery.getI_differenceKind()%>">
+			<input class="field_Q" type="hidden" name="queryone_enterOrg" value="<%=untneAddProofQuery.getQueryone_enterOrg()%>">
+			<input class="field_Q" type="hidden" name="queryone_ownership" value="<%=untneAddProofQuery.getQueryone_ownership()%>">
+			<input class="field_Q" type="hidden" name="queryone_caseNo" value="<%=untneAddProofQuery.getQueryone_caseNo()%>">
+			<input class="field_Q" type="hidden" name="queryone_differenceKind" value="<%=untneAddProofQuery.getQueryone_differenceKind()%>">
+			<input class="field_Q" type="hidden" name="pageSize1" value="<%=untneAddProofQuery.getPageSize1()%>">
+			<input class="field_Q" type="hidden" name="totalPage1" value="<%=untneAddProofQuery.getTotalPage1()%>">
+			<input class="field_Q" type="hidden" name="currentPage1" value="<%=untneAddProofQuery.getCurrentPage1()%>">
+			<input class="field_Q" type="hidden" name="totalRecord1" value="<%=untneAddProofQuery.getTotalRecord1()%>">
+			<input class="field_Q" type="hidden" name="recordStart1" value="<%=untneAddProofQuery.getRecordStart1()%>">
+			<input class="field_Q" type="hidden" name="recordEnd1" value="<%=untneAddProofQuery.getRecordEnd1()%>">
+		</td>
+	</tr>
+</table>

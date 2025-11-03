@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<something-else-entirely>
+  <proxool>
+    <alias>hcsa_microsoft</alias>	
+ 
+	<!-- oracle -->
+	<!--
+	<driver-url>jdbc:oracle:thin:@192.168.137.4:1521:oracle</driver-url>
+
+    <driver-class>oracle.jdbc.driver.OracleDriver</driver-class>
+    <driver-properties>
+     
+	  <property name="user" value="tbek"/>
+      <property name="password" value="tbek"/>
+	-->
+
+	<!-- 本機 SQL Server  
+		<driver-url>jdbc:jtds:sqlserver://127.0.0.1:1433/TCGH_TRANSFER</driver-url>
+		<driver-class>net.sourceforge.jtds.jdbc.Driver</driver-class>
+		<driver-properties>
+			<property name="user" value="sa" />
+			<property name="password" value="sqlserverpassword" />
+		</driver-properties>
+   -->	
+	
+	<!-- 公司 測試區  SQL Server 
+		<driver-url>jdbc:jtds:sqlserver://172.16.30.231:1433/TCGH_TEST</driver-url>
+		<driver-class>net.sourceforge.jtds.jdbc.Driver</driver-class>
+		<driver-properties>
+			<property name="user" value="TCGH" />
+			<property name="password" value="TCGH" />
+		</driver-properties>
+	-->
+	
+	<!-- 公司 模擬 科技部 測試區  SQL Server	-->
+		<driver-url>jdbc:jtds:sqlserver://172.16.52.74:1433/TEBA0208</driver-url>
+		<driver-class>net.sourceforge.jtds.jdbc.Driver</driver-class>
+		<driver-properties>
+			<property name="user" value="sa" />
+			<property name="password" value="kd*12377493" />
+<!-- 			<property name="user" value="tdcmUser" /> -->
+<!-- 			<property name="password" value="tdcm*12377493" /> -->
+    	</driver-properties>
+
+	
+	<!--  公司轉檔 測試區  SQL Server	
+		<driver-url>jdbc:jtds:sqlserver://172.16.30.81:1433/TCGH_TRANSFER</driver-url>
+		<driver-class>net.sourceforge.jtds.jdbc.Driver</driver-class>
+		<driver-properties>
+			<property name="user" value="TCGH" />
+			<property name="password" value="1qaz@WSX" />
+		</driver-properties>	
+	-->
+		
+	<!--  科技部 測試區  SQL Server	
+		<driver-url>jdbc:jtds:sqlserver://10.4.180.13:1433/TCGHDB</driver-url>
+		<driver-class>net.sourceforge.jtds.jdbc.Driver</driver-class>
+		<driver-properties>
+			<property name="user" value="TCGHQM" />
+			<property name="password" value="tcghqm!@#$56" />
+		</driver-properties>	
+	-->
+	<!-- 公司 模擬 科技部 測試區  2019 SQL Server	
+		<driver-url>jdbc:jtds:sqlserver://172.16.52.74:1433/TDCM</driver-url>
+		<driver-class>net.sourceforge.jtds.jdbc.Driver</driver-class>
+		<driver-properties>
+			<property name="user" value="tdcmUser" />
+			<property name="password" value="tdcm*12377493" />
+		</driver-properties>
+	-->	
+	<!--  科技部 正式區  SQL Server    --> 
+	<!--	<driver-url>jdbc:jtds:sqlserver://10.205.20.191:1433/SPPMS</driver-url>
+		<driver-class>net.sourceforge.jtds.jdbc.Driver</driver-class>
+		<driver-properties>
+			<property name="user" value="SPPMSQM" />
+			<property name="password" value="sppmsqm!@#$56" />
+		</driver-properties>	
+	-->
+<!--  		<driver-url>jdbc:jtds:sqlserver://10.205.26.22:1433/SPPMS</driver-url>  -->
+<!--  		<driver-class>net.sourceforge.jtds.jdbc.Driver</driver-class>  -->
+<!--  		<driver-properties>  -->
+<!--  			<property name="user" value="sa" />  -->
+<!--  			<property name="password" value="1234P@ssw0rd1234" />  -->
+<!--  		</driver-properties>	  -->
+	
+	
+		<minimum-connection-count>500</minimum-connection-count>
+		<maximum-connection-count>30000</maximum-connection-count>
+		<maximum-connection-lifetime>600000</maximum-connection-lifetime>
+		<maximum-active-time>600000</maximum-active-time>
+		<house-keeping-sleep-time>30000</house-keeping-sleep-time>
+		<house-keeping-test-sql>select 1</house-keeping-test-sql>  
+		<test-before-use>true</test-before-use>
+  </proxool>
+</something-else-entirely>
+
+

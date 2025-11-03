@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="trace">
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger - %msg%n" />
+    </Console>
+  </Appenders>
+  <Loggers>
+    <!-- 1. 將 JasperReports export package 的 DEBUG 降到 INFO -->
+    <Logger name="net.sf.jasperreports.engine.export" level="info" additivity="false">
+      <AppenderRef ref="Console"/>
+    </Logger>
+
+    <!-- 2. 將 Proxool 連線池的 DEBUG 降到 WARN -->
+    <Logger name="org.logicalcobwebs.proxool" level="warn" additivity="false">
+      <AppenderRef ref="Console"/>
+    </Logger>
+    
+    <Root level="debug">
+      <AppenderRef ref="Console"/>
+    </Root>
+  </Loggers>
+</Configuration>

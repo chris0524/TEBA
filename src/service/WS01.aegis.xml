@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings>
+<mapping>
+<method name="Query_list">
+<parameter index="0" mappedName="empid" />
+<parameter index="1" mappedName="emppwd" />
+<parameter index="2" mappedName="AuthCode" />
+</method>
+</mapping>
+</mappings>

@@ -1,0 +1,220 @@
+﻿--分段執行--
+----Remove DB Link Server
+EXEC sp_dropserver 'ap154', 'droplogins';
+
+--Add DB Link Server
+EXEC sp_addlinkedserver
+@server = 'ap154', --Server Name
+@srvproduct = 'MS SQL', 
+@datasrc = '172.16.30.154' , --Server IP
+@provider = 'SQLNCLI'
+
+--Add Login User and Password
+EXEC sp_addlinkedsrvlogin
+@rmtsrvname = 'ap154' , --Server Name
+@useself = 'false' ,
+@locallogin = NULL ,
+@rmtuser = 'TCGH' , --User
+@rmtpassword = '1qaz@WSX' --Password
+
+
+--分段執行--
+ALTER TABLE ASsetBasic ADD propertyno nvarchar(11);
+ALTER TABLE ASsetBasic ADD lotno nvarchar(7);
+ALTER TABLE ASsetBasic ADD serialno nvarchar(7);
+ALTER TABLE ASsetBasic ADD differencekind nvarchar(3);
+
+--分段執行 竹科管局用--
+--propertyno 處理  這處需依實際現況輸入修改  桂香說 503、504、505 開頭都照原財編轉入
+update ASsetBasic SET propertyno = ( SELECT newpropertyno FROM     ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING  WHERE enterorg = 'A27040000G' AND (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) = CategoryID) WHERE CategoryID  IN (SELECT (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) FROM ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING WHERE enterorg = 'A27040000G')
+update ASsetBasic set propertyno=(select replace(CategoryID,'         ','')+'000000' from ASsetBasic b where b.RecID=ASsetBasic.RecID ) where len(CategoryID)=5 AND substring(CategoryID,1,3) not in ('503','504','505') AND CategoryID not IN (SELECT (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) FROM ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING WHERE enterorg = 'A27040000G');
+update ASsetBasic set propertyno=(select replace(CategoryID,'       ','')+'0000' from ASsetBasic b where  b.RecID=ASsetBasic.RecID ) where len(CategoryID)=7 AND substring(CategoryID,1,3) not in ('503','504','505') AND CategoryID not IN (SELECT (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) FROM ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING WHERE enterorg = 'A27040000G') ;
+update ASsetBasic set propertyno=(select replace(CategoryID,'       ','') from ASsetBasic b where  b.RecID=ASsetBasic.RecID ) where len(CategoryID)<=9 AND substring(CategoryID,1,3) in ('503','504','505') AND CategoryID not IN (SELECT (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) FROM ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING WHERE enterorg = 'A27040000G') ;
+update ASsetBasic set propertyno=(select replace(CategoryID,'-','00') from ASsetBasic b where  b.RecID=ASsetBasic.RecID ) where len(CategoryID)=10  AND CategoryID not IN (SELECT (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) FROM ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING WHERE enterorg = 'A27040000G') ;
+update ASsetBasic set propertyno=(select replace(CategoryID,'-','0') from ASsetBasic b where  b.RecID=ASsetBasic.RecID ) where len(CategoryID)=11  AND CategoryID not IN (SELECT (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) FROM ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING WHERE enterorg = 'A27040000G');
+UPDATE dbo.ASLandBasic SET ValCur = '558043.00' WHERE assetno = '109500089' AND AssetID = '109500089001'
+
+--分段執行 竹科實中用--
+--propertyno 處理  這處需依實際現況輸入修改  桂香說 503、504、505 開頭都照原財編轉入
+update ASsetBasic SET propertyno = ( SELECT newpropertyno FROM     ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING  WHERE enterorg = 'A10120000U' AND (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) = CategoryID) WHERE CategoryID  IN (SELECT (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) FROM ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING WHERE enterorg = 'A10120000U')
+update ASsetBasic set propertyno=(select replace(CategoryID,'         ','')+'000000' from ASsetBasic b where b.RecID=ASsetBasic.RecID ) where len(CategoryID)=5 AND substring(CategoryID,1,3) not in ('503','504','505') AND CategoryID not IN (SELECT (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) FROM ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING WHERE enterorg = 'A10120000U');
+update ASsetBasic set propertyno=(select replace(CategoryID,'       ','')+'0000' from ASsetBasic b where  b.RecID=ASsetBasic.RecID ) where len(CategoryID)=7 AND substring(CategoryID,1,3) not in ('503','504','505') AND CategoryID not IN (SELECT (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) FROM ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING WHERE enterorg = 'A10120000U') ;
+update ASsetBasic set propertyno=(select replace(CategoryID,'       ','') from ASsetBasic b where  b.RecID=ASsetBasic.RecID ) where len(CategoryID)<=9 AND substring(CategoryID,1,3) in ('503','504','505') AND CategoryID not IN (SELECT (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) FROM ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING WHERE enterorg = 'A10120000U') ;
+update ASsetBasic set propertyno=(select replace(CategoryID,'-','00') from ASsetBasic b where  b.RecID=ASsetBasic.RecID ) where len(CategoryID)=10  AND CategoryID not IN (SELECT (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) FROM ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING WHERE enterorg = 'A10120000U') ;
+update ASsetBasic set propertyno=(select replace(CategoryID,'-','0') from ASsetBasic b where  b.RecID=ASsetBasic.RecID ) where len(CategoryID)=11  AND CategoryID not IN (SELECT (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) FROM ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING WHERE enterorg = 'A10120000U');
+
+
+--分段執行 中科實中用--
+--propertyno 處理  這處需依實際現況輸入修改  桂香說 503、504、505 開頭都照原財編轉入
+update ASsetBasic SET propertyno = ( SELECT   newpropertyno FROM     ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING  WHERE enterorg = 'A102V0000U' AND (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) = CategoryID) WHERE CategoryID  IN (SELECT (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) FROM ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING WHERE enterorg = 'A102V0000U')
+update ASsetBasic set propertyno=(select replace(CategoryID,'         ','')+'000000' from ASsetBasic b where b.RecID=ASsetBasic.RecID ) where len(CategoryID)=5 AND substring(CategoryID,1,3) not in ('503','504','505') AND CategoryID not IN (SELECT (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) FROM ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING WHERE enterorg = 'A102V0000U');
+update ASsetBasic set propertyno=(select replace(CategoryID,'       ','')+'0000' from ASsetBasic b where  b.RecID=ASsetBasic.RecID ) where len(CategoryID)=7 AND substring(CategoryID,1,3) not in ('503','504','505') AND CategoryID not IN (SELECT (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) FROM ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING WHERE enterorg = 'A102V0000U') ;
+update ASsetBasic set propertyno=(select replace(CategoryID,'       ','') from ASsetBasic b where  b.RecID=ASsetBasic.RecID ) where len(CategoryID)<=9 AND substring(CategoryID,1,3) in ('503','504','505') AND CategoryID not IN (SELECT (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) FROM ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING WHERE enterorg = 'A102V0000U') ;
+update ASsetBasic set propertyno=(select replace(CategoryID,'-','00') from ASsetBasic b where  b.RecID=ASsetBasic.RecID ) where len(CategoryID)=10  AND CategoryID not IN (SELECT (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) FROM ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING WHERE enterorg = 'A102V0000U') ;
+update ASsetBasic set propertyno=(select replace(CategoryID,'-','0') from ASsetBasic b where  b.RecID=ASsetBasic.RecID ) where len(CategoryID)=11  AND CategoryID not IN (SELECT (oldpropertyno collate Chinese_Taiwan_Stroke_BIN) FROM ap154.TCGH_TRANSFER.dbo.PROPERTYMAPPING WHERE enterorg = 'A102V0000U');
+
+
+--分段執行 竹科管局用--
+update ASsetBasic set differencekind=(select case AcctTagID when '1' then '110' when '2' then '120' when '4' then '110' when '5' then '500' when '6' then '111' end) ;
+
+--分段執行 實中用--
+update ASsetBasic set differencekind='110' ;
+
+--分段執行--
+--lotno 處理
+DECLARE @RecID INT
+DECLARE @AssetNo varchar(20)
+DECLARE @AssetID varchar(30)  
+DECLARE @lotno varchar(7)
+DECLARE @AcctTagID varchar(1)
+DECLARE @differencekind varchar(3)
+DECLARE @_i INT
+DECLARE @_MAX INT
+ update ASsetBasic set lotno=null
+ SET @_i = 0
+ SET  select @_MAX=count(*) from ASsetBasic where lotno is null 
+ WHILE (@_i<@_MAX)
+ BEGIN
+	--要迴圈的語法
+	select @AssetNo=AssetNo,@AssetID=AssetID,@differencekind=differencekind from ASsetBasic where lotno is null order by AssetID desc
+	SET  select @lotno=isnull(max(isnull(lotno,0)),0) from ASsetBasic where AssetNo=@AssetNo and lotno is not null and differencekind=@differencekind
+        if(@lotno='0') begin
+		
+		select @lotno=max(isnull(lotno,0)) from ASsetBasic 
+		set @lotno=@lotno+1
+		set @lotno=right('0000000'+@lotno,7)
+		update ASsetBasic set lotno=@lotno where AssetID=@AssetID
+	end
+	else begin
+		update ASsetBasic set lotno=@lotno where AssetID=@AssetID
+	end
+	--加1
+	Set @_i=@_i+1
+ END
+GO
+
+--分段執行--
+--serialno 處理
+DECLARE @RecID INT
+DECLARE @propertyno varchar(11)
+DECLARE @serialno varchar(7)
+DECLARE @AssetID varchar(30) 
+DECLARE @AcctTagID varchar(1)
+DECLARE @differencekind varchar(3)
+DECLARE @_i INT
+DECLARE @_MAX INT
+ update ASsetBasic set serialno=null 
+ SET @_i = 0
+ SET  select @_MAX=count(*) from ASsetBasic where serialno is null
+ WHILE (@_i<@_MAX)
+ BEGIN
+	--要迴圈的語法
+	select @propertyno=propertyno,@AssetID=AssetID,@differencekind=differencekind from ASsetBasic where serialno is null order by AssetID desc
+	select @serialno=max(isnull(serialno,0)) from ASsetBasic where propertyno=@propertyno and differencekind=@differencekind
+	set @serialno=@serialno+1
+	set @serialno=right('0000000'+@serialno,7)
+	update ASsetBasic set serialno=@serialno where AssetID=@AssetID
+	--加1
+	Set @_i=@_i+1
+ END
+
+------------------程式注意事項---------------------------
+
+IMPORTDATE.JAVA
+
+轉檔程式中，目前還在轉檔的為
+UNTDP_MONTHDEPR("UNTDP_MONTHDEPR");
+
+該項有一個條件
+SqlStr+="and b.RecID>='524426' "; //中斷繼續用
+
+為我上次中斷後續轉之起始ID
+
+以今天為例  可使用下方找到我目前轉入最大ID，
+如遇當天多次中斷情形 可適時加上propertytype條件分別(1=土地、2=土改、3=建物…等)
+
+select MAX(serialno1) from UNTDP_MONTHDEPR where enterorg='A27040000G' 
+and editdate='20141114' and edittime=(
+select max(edittime) from UNTDP_MONTHDEPR where enterorg='A27040000G' 
+and editdate='20141114'
+)
+
+
+
+----------------消耗品--------------------
+
+ALTER TABLE ASNXDistribute  ADD propertyno nvarchar(13);  
+ALTER TABLE ASNXDistribute  ADD lotno nvarchar(7);        
+ALTER TABLE ASNXDistribute  ADD serialno nvarchar(7);
+ALTER TABLE ASNXBasic  ADD differencekind nvarchar(3); 
+GO
+
+--分段執行--
+--propertyno 處理
+update ASNXDistribute  set propertyno=(select replace(CategoryID,'-','') from ASNXBasic b where  b.AssetNo=ASNXDistribute.AssetNo ) ;
+GO
+--分段執行 竹科管局用--
+update ASNXBasic set differencekind=(select case AcctTagID when '1' then '110' when '2' then '120' when '5' then '500' else '500'  end) ;
+
+--分段執行 實中用--
+update ASNXBasic set differencekind='110' ;
+
+
+--分段執行--
+--lotno 處理
+DECLARE @RecID INT
+DECLARE @AssetNo varchar(20) 
+DECLARE @AssetID varchar(30)  
+DECLARE @lotno varchar(7)
+DECLARE @AcctTagID varchar(1)
+DECLARE @differencekind varchar(3)
+DECLARE @_i INT
+DECLARE @_MAX INT
+ update ASNXDistribute set lotno=null 
+ SET @_i = 0
+ SET  select @_MAX=count(*) from ASNXDistribute  where lotno is null 
+ WHILE (@_i<@_MAX)
+ BEGIN
+	--要迴圈的語法
+	select @AssetNo=ASNXDistribute.AssetNo,@AssetID=ASNXDistribute.AssetID,@differencekind=ASNXBasic.differencekind from ASNXDistribute left join ASNXBasic on ASNXDistribute.AssetNo=ASNXBasic.AssetNo where lotno is null order by ASNXDistribute.AssetID desc
+	SET  select @lotno=isnull(max(isnull(lotno,0)),0) from ASNXDistribute left join ASNXBasic on ASNXDistribute.AssetNo=ASNXBasic.AssetNo  where ASNXBasic.AssetNo=@AssetNo and lotno is not null and ASNXBasic.differencekind=@differencekind
+        if(@lotno='0') begin
+		
+		select @lotno=max(isnull(lotno,0)) from ASNXDistribute 
+		set @lotno=@lotno+1
+		set @lotno=right('0000000'+@lotno,7)
+		update ASNXDistribute set lotno=@lotno where AssetID=@AssetID
+	end
+	else begin
+		update ASNXDistribute set lotno=@lotno where AssetID=@AssetID
+	end
+	--加1
+	Set @_i=@_i+1
+ END
+GO
+
+--分段執行--
+--serialno 處理
+DECLARE @RecID INT
+DECLARE @propertyno varchar(13)
+DECLARE @serialno varchar(7)
+DECLARE @AssetID varchar(30) 
+DECLARE @AcctTagID varchar(1)
+DECLARE @differencekind varchar(3)
+DECLARE @_i INT
+DECLARE @_MAX INT
+ update ASNXDistribute set serialno=null
+ SET @_i = 0
+ SET  select @_MAX=count(*) from ASNXDistribute where serialno is null
+ WHILE (@_i<@_MAX)
+ BEGIN
+	--要迴圈的語法
+	select @propertyno=ASNXDistribute.propertyno,@AssetID=ASNXDistribute.AssetID,@differencekind=ASNXBasic.differencekind from ASNXDistribute left join ASNXBasic on ASNXDistribute.AssetNo=ASNXBasic.AssetNo where serialno is null order by ASNXDistribute.AssetID desc
+	select @serialno=max(isnull(serialno,0)) from ASNXDistribute left join ASNXBasic on ASNXDistribute.AssetNo=ASNXBasic.AssetNo where ASNXDistribute.propertyno=@propertyno and ASNXBasic.differencekind=@differencekind
+	set @serialno=@serialno+1
+	set @serialno=right('0000000'+@serialno,7)
+	update ASNXDistribute set serialno=@serialno where AssetID=@AssetID
+	--加1
+	Set @_i=@_i+1
+ END
+GO

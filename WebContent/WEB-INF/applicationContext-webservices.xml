@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<import resource="classpath:org/codehaus/xfire/spring/xfire.xml"/>	
+	<bean id="addressingHandler" class="org.codehaus.xfire.addressing.AddressingInHandler"/>  	
+		
+	<!-- WS01WebService -->
+	<bean id="ws01" class="service.impl.WS01Impl"/>  	
+	<bean name="WS01" class="org.codehaus.xfire.spring.ServiceBean">  
+		<property name="serviceFactory" ref="xfire.serviceFactory" />
+		<property name="serviceBean" ref="ws01"/>  
+		<property name="serviceClass" value="service.WS01"/>
+		<property name="inHandlers">  
+		<list>  
+	   <ref bean="addressingHandler"/>  
+		</list>  
+		</property>   
+	</bean>
+	<!-- WS02WebService -->
+	<bean id="ws02" class="service.impl.WS02Impl"/>  	
+	<bean name="WS02" class="org.codehaus.xfire.spring.ServiceBean">  
+		<property name="serviceFactory" ref="xfire.serviceFactory" />
+		<property name="serviceBean" ref="ws02"/>  
+		<property name="serviceClass" value="service.WS02"/>
+		<property name="inHandlers">  
+		<list>  
+	   <ref bean="addressingHandler"/>  
+		</list>  
+		</property>   
+	</bean>
+	<!-- WS03WebService -->
+	<bean id="ws03" class="service.impl.WS03Impl"/>  	
+	<bean name="WS03" class="org.codehaus.xfire.spring.ServiceBean">  
+		<property name="serviceFactory" ref="xfire.serviceFactory" />
+		<property name="serviceBean" ref="ws03"/>  
+		<property name="serviceClass" value="service.WS03"/>
+		<property name="inHandlers">  
+		<list>  
+	   <ref bean="addressingHandler"/>  
+		</list>  
+		</property>   
+	</bean>
+	<!-- WS04WebService -->
+	<bean id="ws04" class="service.impl.WS04Impl"/>  	
+	<bean name="WS04" class="org.codehaus.xfire.spring.ServiceBean">  
+		<property name="serviceFactory" ref="xfire.serviceFactory" />
+		<property name="serviceBean" ref="ws04"/>  
+		<property name="serviceClass" value="service.WS04"/>
+		<property name="inHandlers">  
+		<list>  
+	   <ref bean="addressingHandler"/>  
+		</list>  
+		</property>   
+	</bean>
+	<!-- WS05WebService -->
+	<bean id="ws05" class="service.impl.WS05Impl"/>  	
+	<bean name="WS05" class="org.codehaus.xfire.spring.ServiceBean">  
+		<property name="serviceFactory" ref="xfire.serviceFactory" />
+		<property name="serviceBean" ref="ws05"/>  
+		<property name="serviceClass" value="service.WS05"/>
+		<property name="inHandlers">  
+		<list>  
+	   <ref bean="addressingHandler"/>  
+		</list>  
+		</property>   
+	</bean>
+	<!-- WS07WebService -->
+	<bean id="ws07" class="service.impl.WS07Impl"/>  	
+	<bean name="WS07" class="org.codehaus.xfire.spring.ServiceBean">  
+		<property name="serviceFactory" ref="xfire.serviceFactory" />
+		<property name="serviceBean" ref="ws07"/>  
+		<property name="serviceClass" value="service.WS07"/>
+		<property name="inHandlers">  
+		<list>  
+	   <ref bean="addressingHandler"/>  
+		</list>  
+		</property>   
+	</bean>
+	<!-- WS09WebService -->
+	<bean id="ws09" class="service.impl.WS09Impl"/>  	
+	<bean name="WS09" class="org.codehaus.xfire.spring.ServiceBean">  
+		<property name="serviceFactory" ref="xfire.serviceFactory" />
+		<property name="serviceBean" ref="ws09"/>  
+		<property name="serviceClass" value="service.WS09"/>
+		<property name="inHandlers">  
+		<list>  
+	   <ref bean="addressingHandler"/>  
+		</list>  
+		</property>   
+	</bean>
+</beans>

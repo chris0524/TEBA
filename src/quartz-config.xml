@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job-scheduling-data>
+	<schedule>
+		<job>
+			<name>SyncOrgListBySOA</name>
+			<group>tcgh</group>
+			<description>透過SOA將科技部所有的組織與人員同步到本系統</description>
+			<job-class>jobs.SyncOrgListBySOAJob</job-class>
+		</job>
+		<trigger>
+			<cron>
+				<name>SyncOrgListBySOATrigger</name>
+				<job-name>SyncOrgListBySOA</job-name>
+				<job-group>tcgh</job-group>
+				<!-- It will run every 2 seconds -->
+				<cron-expression>0/2 * * * * ?</cron-expression>
+			</cron>
+		</trigger>
+	</schedule>
+</job-scheduling-data>

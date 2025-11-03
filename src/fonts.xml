@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fontFamilies>
+	<fontFamily name="標楷體">
+		<normal>kaiu.ttf</normal>
+		<pdfEncoding>Identity-H</pdfEncoding>
+		<pdfEmbedded>true</pdfEmbedded>
+			<exportFonts>
+				<export key="net.sf.jasperreports.html">'標楷體', Arial, Helvetica, sans-serif</export>
+				<export key="net.sf.jasperreports.xhtml">'標楷體', Arial, Helvetica, sans-serif</export>
+		</exportFonts>
+	</fontFamily>
+	<fontFamily name="msjhbd">
+		<normal>msjhbd.ttf</normal>
+		<pdfEncoding>Identity-H</pdfEncoding>
+		<pdfEmbedded>true</pdfEmbedded>
+			<exportFonts>
+				<export key="net.sf.jasperreports.html">'msjhbd', Arial, Helvetica, sans-serif</export>
+				<export key="net.sf.jasperreports.xhtml">'msjhbd', Arial, Helvetica, sans-serif</export>
+		</exportFonts>
+	</fontFamily>
+	<fontFamily name="Arial Narrow">
+		<normal>ARIALN.TTF</normal>
+		<pdfEncoding>Identity-H</pdfEncoding>
+		<pdfEmbedded>true</pdfEmbedded>
+			<exportFonts>
+				<export key="net.sf.jasperreports.html">'Arial Narrow', Arial, Helvetica, sans-serif</export>
+				<export key="net.sf.jasperreports.xhtml">'Arial Narrow', Arial, Helvetica, sans-serif</export>
+		</exportFonts>
+	</fontFamily>	
+</fontFamilies>

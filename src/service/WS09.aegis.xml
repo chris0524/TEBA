@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings>
+<mapping>
+<method name="Query_differenceKind">
+<parameter index="0" mappedName="enterorg" />
+  <parameter index="1" mappedName="AuthCode" />
+</method>
+</mapping>
+</mappings>

@@ -1,0 +1,326 @@
+<!--
+程式目的：非消耗品資料維護-明細資料
+程式代號：untdu012f
+程式日期：0970711
+程式作者：shan
+--------------------------------------------------------
+修改作者　　修改日期　　　修改目的
+--------------------------------------------------------
+-->
+
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="../../home/head.jsp" %>
+<jsp:useBean id="obj" scope="request" class="unt.du.UNTDU044F">
+	<jsp:setProperty name="obj" property="*"/>
+</jsp:useBean>
+<jsp:useBean id="objList" scope="page" class="java.util.ArrayList"/>
+
+<%
+if ("queryAll".equals(obj.getState())) {
+	if ("false".equals(obj.getQueryAllFlag())){obj.setQueryAllFlag("true"); }
+}else if ("queryOne".equals(obj.getState())) {
+	obj = (unt.du.UNTDU044F)obj.queryOne();	
+}else if ("insert".equals(obj.getState()) || "insertError".equals(obj.getState())) {
+	obj.insert();
+}else if ("update".equals(obj.getState()) || "updateError".equals(obj.getState())) {
+	obj.update();
+}else if ("delete".equals(obj.getState()) || "deleteError".equals(obj.getState())) {
+	obj.delete();
+}
+if ("true".equals(obj.getQueryAllFlag())){
+	objList = obj.queryAll();
+}
+%>
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta http-equiv="pragma" content="no-cache"/>
+<meta http-equiv="Cache-control" content="no-cache"/>
+<link rel="stylesheet" href="../../js/default.css" type="text/css"/>
+<script type="text/javascript" src="../../js/validate.js"></script>
+<script type="text/javascript" src="../../js/function.js"></script>
+<script type="text/javascript" src="../../js/tablesoft.js"></script>
+<script language="javascript" src="../../js/sList2.js"></script>
+<script type="text/javascript" src="../../js/changeEnterOrg_FundType.js"></script>
+<script language="javascript">
+var insertDefault;	//二維陣列, 新增時, 設定預設值
+function checkField(){
+	var alertStr="";
+	if(form1.state.value=="queryAll"){
+		alertStr += checkQuery();
+	}else if(form1.state.value=="insert"||form1.state.value=="insertError"||form1.state.value=="update"||form1.state.value=="updateError"){
+		alertStr += checkEmpty(form1.enterOrg,"入帳機關");
+		alertStr += checkEmpty(form1.enterOrgName,"入帳機關名稱");
+		alertStr += checkEmpty(form1.ownership,"權屬");
+		alertStr += checkEmpty(form1.caseNo,"電腦單號");
+		alertStr += checkEmpty(form1.propertyNo,"財產編號");
+	}
+	if(alertStr.length!=0){ alert(alertStr); return false; }
+	beforeSubmit();
+}
+function queryOne(enterOrg,ownership,propertyNo,lotNo,serialNo){
+	form1.enterOrg.value=enterOrg;
+	form1.ownership.value=ownership;
+	form1.propertyNo.value=propertyNo;
+	form1.lotNo.value=lotNo;
+	form1.serialNo.value=serialNo;
+	form1.state.value="queryOne";
+	beforeSubmit();
+	form1.submit();
+}
+
+function init(){
+	setDisplayItem('spanInsert,spanDelete,spanNextInsert,spanQueryAll','H');
+}
+
+function checkURL(surl){
+		form1.state.value = "queryAll";
+		form1.action = surl;
+		beforeSubmit();
+		form1.submit();
+}
+</script>
+</head>
+
+<body topmargin="0" onLoad="init();whatButtonFireEvent('<%=obj.getState()%>');showErrorMsg('<%=obj.getErrorMsg()%>');">
+<form id="form1" name="form1" method="post" onSubmit="return checkField()">
+
+<!--Query區============================================================-->
+<div id="queryContainer" style="width:400px;height:400px;display:none">
+	<iframe id="queryContainerFrame"></iframe>
+	<div class="queryTitle">查詢視窗</div>
+	<table class="queryTable"  border="1">
+	<tr><td>
+		<input type="hidden" name="q_chengClass" size="10" maxlength="10" value="<%=obj.getQ_chengClass()%>">
+		<input type="hidden" name="q_enterOrg" value="<%=obj.getQ_enterOrg()%>">
+		<input type="hidden" name="q_enterOrgName" value="<%=obj.getQ_enterOrgName()%>">
+		<input type="hidden" name="q_ownership" value="<%=obj.getQ_ownership()%>">
+		<input type="hidden" name="q_caseNo" value="<%=obj.getQ_caseNo()%>">
+		<input type="hidden" name="q_lotNo" value="<%=obj.getQ_lotNo()%>">
+		<input type="hidden" name="q_propertyNo" value="<%=obj.getQ_propertyNo()%>">
+		<input type="hidden" name="q_serialNo" value="<%=obj.getQ_serialNo()%>">
+	</td></tr>
+	</table>
+</div>
+
+<TABLE STYLE="width:100%;" CELLPADDING=0 CELLSPACING=0 valign="top">
+	<tr><td ID=t1 CLASS="tab_border1" HEIGHT="25">非消耗品資料維護-明細資料</td></tr>
+</TABLE>
+<!--頁籤區=============================================================-->
+<table width="100%" cellspacing="0" cellpadding="0">
+<!--Form區============================================================-->
+<tr><td class="bg">
+	<div id="formContainer">
+	<table class="table_form" width="100%" height="100%">
+	<tr>
+		<td class="td_form" ><font color="red">*</font>入帳機關：</td>
+		<td class="td_form_white" colspan="3">
+			<input class="field_Q" type="hidden" name="enterOrg" size="10" maxlength="10" value="<%=obj.getEnterOrg()%>">
+			[<input class="field_QRO" type="text" name="enterOrgName" size="20" maxlength="50" value="<%=obj.getEnterOrgName()%>">]
+			權屬：
+			<select class="field_P" type="select" name="ownershipshow">
+				<%=util.View.getOnwerOption(obj.getOwnership())%>			
+			</select>
+			<input class="field" type="hidden" name="ownership" size="1" maxlength="1" value="<%=obj.getOwnership()%>">
+			批號：[<input class="field_RO" type="text" name="lotNo" size="7" maxlength="7" value="<%=obj.getLotNo()%>">]
+			<br>
+			財產編號：
+			[<input class="field_RO" type="text" name="propertyNo" size="11" maxlength="11" value="<%=obj.getPropertyNo()%>">]
+			分號：[<input class="field_RO" type="text" name="serialNo" size="7" maxlength="7" value="<%=obj.getSerialNo()%>">]
+		</td>
+	</tr>
+	<tr>
+		<td class="td_form">資料狀態：</td>
+		<td class="td_form_white" colspan="3">
+			<select class="field" type="select" name="dataState">
+				<%=util.View.getTextOption("1;現存;2;已減損",obj.getDataState())%>			
+			</select>
+			入帳：
+			<select class="field" type="select" name="verify">
+				<%=util.View.getYNOption(obj.getVerify())%>
+			</select>
+			月結：
+			<select class="field" type="select" name="closing">
+				<%=util.View.getYNOption(obj.getClosing())%>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td class="td_form">原物品編號：</td>
+		<td class="td_form_white" colspan="3">
+			[<input class="field_RO" type="text" name="oldPropertyNo" size="12" maxlength="12" value="<%=obj.getOldPropertyNo()%>">]
+			原分號：
+			[<input class="field_RO" type="text" name="oldSerialNo" size="7" maxlength="7" value="<%=obj.getOldSerialNo()%>">]
+		</td>
+	</tr>
+	<tr>
+		<td class="td_form">牌照號碼規格：</td>
+		<td class="td_form_white" colspan="3">
+			<input class="field" type="text" name="licensePlate" size="30" maxlength="30" value="<%=obj.getLicensePlate()%>">&nbsp;&nbsp;
+			用途：
+			<input class="field" type="text" name="purpose" size="30" maxlength="50" value="<%=obj.getPurpose()%>">
+		</td>
+	</tr>
+	<tr>
+		<td class="td_form">帳面資料：</td>
+		<td class="td_form_white" colspan="3">
+			原始數量：
+			<input class="field" type="text" name="originalAmount" size="7" maxlength="7" value="<%=obj.getOriginalAmount()%>">
+			原始價值：
+			<input class="field" type="text" name="originalBV" size="15" maxlength="15" value="<%=obj.getOriginalBV()%>">
+		<br>
+			數量：
+			<input class="field" type="text" name="bookAmount" size="7" maxlength="7" value="<%=obj.getBookAmount()%>">
+			價值：
+			<input class="field" type="text" name="bookValue" size="15" maxlength="15" value="<%=obj.getBookValue()%>">
+		</td>
+	</tr>
+	<tr>
+		<td class="td_form">盤點資料：</td>
+		<td class="td_form_white" colspan="3">
+			條碼：
+			[<input class="field_RO" type="text" name="barCode" size="15" maxlength="11" value="<%=obj.getBarCode()%>">]&nbsp;　　　　&nbsp;
+			盤點日期：
+			起<%=util.View.getPopCalndar("field","checkDateS",obj.getCheckDateS())%>&nbsp;~&nbsp;
+			訖<%=util.View.getPopCalndar("field","checkDateE",obj.getCheckDateE())%>
+		<br>
+			盤點結果：
+			<select class="field" type="select" name="checkResult">
+				<%=util.View.getTextOption("1;盤點正常;2;盤點異常",obj.getCheckResult())%>			
+			</select>&nbsp;　　　　　&nbsp;&nbsp;
+			盤點異常原因：
+			<input class="field" type="text" name="oddsCause" size="30" maxlength="16" value="<%=obj.getOddsCause()%>">
+		</td>
+	</tr>
+	<tr>
+		<td class="td_form">毀損資料：</td>
+		<td class="td_form_white" colspan="3">
+			毀損日期：
+			<%=util.View.getPopCalndar("field","damageDate",obj.getDamageDate())%>
+			毀損報局屆滿日：
+			<%=util.View.getPopCalndar("field","damageExpire",obj.getDamageExpire())%>
+		</td>
+	</tr>
+	<tr>
+		<td class="td_form">減損日期：</td>
+		<td class="td_form_white" colspan="3">
+			<%=util.View.getPopCalndar("field","reduceDate",obj.getReduceDate())%>
+			減損原因：
+			<select class="field" type="select" name="reduceCause" >
+			<%=util.View.getOption("select codeID, codeName from SYSCA_Code where codeKindID='CAC'", obj.getReduceCause())%>
+			</select>
+			其它說明：
+			<input class="field" type="text" name="reduceCause1" size="10" maxlength="12" value="<%=obj.getReduceCause1()%>">
+		</td>
+	</tr>
+	<tr>
+		<td class="td_form">其他事項：</td>
+		<td class="td_form_white" colspan="3">
+			<input class="field" type="text" name="notes1" size="60" maxlength="60" value="<%=obj.getNotes1()%>">
+		</td>
+	</tr>
+	<tr>
+		<td class="td_form">原始移動資料：</td>
+		<td class="td_form_white" colspan="3">
+			日期：<%=util.View.getPopCalndar("field","originalMoveDate",obj.getOriginalMoveDate())%>
+		<br>
+			<font color="red">*</font>保管單位：
+			<select class="field" type="select" name="originalKeepUnit" onChange="getKeeper(form1.enterOrg, this, form1.originalKeeper, '' ,'N');">
+  				<%=util.View.getOption("select unitno, unitname from UNTMP_KEEPUNIT where enterorg = '" + ("".equals(obj.getEnterOrg())?user.getOrganID():obj.getEnterOrg()) + "' order by unitno ", obj.getOriginalKeepUnit())%>			
+			</select>
+			<font color="red">*</font>保管人：
+			<select class="field" type="select" name="originalKeeper">
+        		<script>getKeeper(form1.enterOrg, form1.originalKeepUnit, form1.originalKeeper, '<%=obj.getOriginalKeeper()%>' ,'N');</script>			
+        	</select>
+		<br>
+			<font color="red">*</font>使用單位：
+			<select class="field" type="select" name="originalUseUnit" onChange="getKeeper(form1.enterOrg, this, form1.originalUser, '' ,'N');changeUse()">
+			<%=util.View.getOption("select unitno, unitname from UNTMP_KEEPUNIT where enterorg = '" + ("".equals(obj.getEnterOrg())?user.getOrganID():obj.getEnterOrg()) + "' order by unitno ", obj.getOriginalUseUnit()) %>					
+			</select>
+			<font color="red">*</font>使用人：
+			<select class="field" type="select" name="originalUser">
+				<script>getKeeper(form1.enterOrg, form1.originalUseUnit, form1.originalUser, '<%=obj.getOriginalUser()%>' ,'N');</script>					  
+			</select>
+		<br>
+			存置地點：
+			<input name="originalPlace" type="text" class="field" value="<%=obj.getOriginalPlace()%>" size="35" maxlength="25">
+	</td>
+	<tr>
+		<td class="td_form">目前移動資料：</td>
+		<td class="td_form_white" colspan="3">
+			日期：<%=util.View.getPopCalndar("field","moveDate",obj.getMoveDate())%>
+		<br>
+			保管單位：
+			<select class="field" type="select" name="keepUnit" onChange="getKeeper(form1.enterOrg, this, form1.keeper, '');">
+	  			<%=util.View.getOption("select unitno, unitname from UNTMP_KEEPUNIT where enterorg = '" + ("".equals(obj.getEnterOrg())?user.getOrganID():obj.getEnterOrg()) + "' order by unitno ", obj.getKeepUnit())%>			
+			</select>		
+			保管人：
+			<select class="field" type="select" name="keeper">
+	        	<script>getKeeper(form1.enterOrg, form1.keepUnit, form1.keeper, '<%=obj.getKeeper()%>');</script>			
+	        </select>
+		<br>	    
+			使用單位：
+			<select class="field" type="select" name="useUnit" onChange="getKeeper(form1.enterOrg, this, form1.userNo, '');">
+	  			<%=util.View.getOption("select unitno, unitname from UNTMP_KEEPUNIT where enterorg = '" + ("".equals(obj.getEnterOrg())?user.getOrganID():obj.getEnterOrg()) + "' order by unitno ", obj.getUseUnit()) %>					
+	        </select>
+			使用人：
+			<select class="field" type="select" name="userNo">
+	        	<script>getKeeper(form1.enterOrg, form1.useUnit, form1.userNo, '<%=obj.getUserNo()%>');</script>					  
+	        </select>
+		<br>	        
+			存置地點：
+			<input class="field" type="text" name="place" size="35" maxlength="25" value="<%=obj.getPlace()%>">
+		</td>
+	</tr>
+	</table>
+	</div>
+</td></tr>
+
+<!--Toolbar區============================================================-->
+<tr><td class="bg" style="text-align:center">
+
+	<input type="hidden" name="state" value="<%=obj.getState()%>">
+	<input type="hidden" name="queryAllFlag" value="<%=obj.getQueryAllFlag()%>">
+	<input type="hidden" name="userID" value="<%=user.getUserID()%>">
+	<jsp:include page="../../home/toolbar.jsp" />
+	<span id="backup">
+	<input class="toolbar_default" type="button" name="backup" value="回上一層" onClick="checkURL('untdu012f.jsp');">&nbsp;|
+	</span>
+</td></tr>
+
+<tr><td>
+<% request.setAttribute("QueryBean",obj);%>
+<jsp:include page="../../home/page.jsp" />
+</td></tr>
+<!--List區============================================================-->
+<tr><td class="bg">
+<div id="listContainer">
+<table class="table_form" width="100%" cellspacing="0" cellpadding="0">
+	<thead id="listTHEAD">
+	<tr>
+		<th class="listTH" ><a class="text_link_w" >NO.</a></th>
+		<th class="listTH"><a class="text_link_w" onclick="return sortTable('listTBODY',1,false);" href="#">入帳機關名稱</a></th>
+		<th class="listTH"><a class="text_link_w" onclick="return sortTable('listTBODY',2,false);" href="#">權屬</a></th>
+		<th class="listTH"><a class="text_link_w" onclick="return sortTable('listTBODY',3,false);" href="#">財產編號</a></th>
+		<th class="listTH"><a class="text_link_w" onclick="return sortTable('listTBODY',4,false);" href="#">財產批號</a></th>
+		<th class="listTH"><a class="text_link_w" onclick="return sortTable('listTBODY',5,false);" href="#">財產分號</a></th>
+	</tr>
+	</thead>
+	<tbody id="listTBODY">
+	<%
+	boolean primaryArray[] = {true,false,true,false,true,true,true};
+	boolean displayArray[] = {false,true,false,true,true,true,true};
+	out.write(util.View.getQuerylist(primaryArray,displayArray,objList,obj.getQueryAllFlag()));
+	%>
+	</tbody>
+</table>
+</div>
+</td></tr>
+</table>
+</form>
+</body>
+</html>
+
+
+

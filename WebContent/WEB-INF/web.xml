@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                      http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+	version="3.1">
+
+	<display-name>The Managerial Information System of City Property</display-name>
+	<description>The Managerial Information System of City Property</description>
+
+	<!-- for Spring -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/applicationContext-webservices.xml</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>sys.web.MyServletContextListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>sys.web.MyServletContext</listener-class>
+	</listener>
+
+	<!-- System Argu ======================================================= -->
+	<context-param>
+		<param-name>SystemCName</param-name>
+		<param-value>財產管理資訊系統</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>SystemEName</param-name>
+		<param-value>The Managerial Information System of City Property</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>SystemDNS</param-name>
+		<param-value>http://127.0.0.1/kfcp</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>SystemMail</param-name>
+		<param-value>system@kcg.gov.tw</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>ManageOrgName</param-name>
+		<param-value>科技部</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>ManageOrgID</param-name>
+		<param-value>A42000000G</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>ListLimit</param-name>
+		<param-value>500</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>filestoreLocation</param-name>
+		<!-- 本機 <param-value>./temp/upload</param-value> -->
+		<!-- 公司測試區/模擬客戶端/轉檔:172.16.30.55\專案工作區\property -->
+		<!-- 科技部測試區 IP:10.4.170.89 Server name: FL1001 D:\property /正式區: IP:10.180.180.6 
+			Server name: FL1001 F:\property -->
+		<param-value>D:\\AP\\SPPMS\\download</param-value>
+
+	</context-param>
+	<context-param>
+		<param-name>filestoreLimit</param-name>
+		<param-value>5242880</param-value>
+	</context-param>
+	<context-param>
+		<param-name>filestoreAllowedExtList</param-name>
+		<param-value>gif,jpg,doc,htm,html,xls,ppt,txt,rtf,pdf,xml,zip,rar</param-value>
+	</context-param>
+
+	<!--SMTP -->
+	<context-param>
+		<param-name>SMTP</param-name>
+		<param-value>smtp.kcg.gov.tw</param-value>
+
+	</context-param>
+
+	<!-- filter ========================================================= -->
+	<filter>
+		<filter-name>SSOFilter</filter-name>
+		<filter-class>filter.SSOFilter</filter-class>
+		<init-param>
+			<param-name>eipIndexPage</param-name>
+			<!-- 測試機 <param-value>http://tap0758.most.gov.tw/TCGH/index.jsp</param-value> -->
+			<!-- 正式機 -->
+			<param-value>http://ap0758.most.gov.tw/TCGH/index.jsp</param-value>
+
+		</init-param>
+		<init-param>
+			<param-name>appCodeNameFromEip</param-name>
+			<param-value>ap_system_id</param-value>
+		</init-param>
+		<init-param>
+			<param-name>userIdNameFromEip</param-name>
+			<param-value>id</param-value>
+		</init-param>
+		<init-param>
+			<param-name>ipNameFromEip</param-name>
+			<param-value>UserIP</param-value>
+		</init-param>
+		<init-param>
+			<param-name>token1NameFromEip</param-name>
+			<param-value>token1</param-value>
+		</init-param>
+		<init-param>
+			<param-name>validateSSOToken1Type</param-name>
+			<param-value>2</param-value><!-- 如何驗證token1。0:不驗證、1：即時呼叫SSO驗證、2：搭配intervalForValidingSSOToken1呼叫SSO驗證 -->
+		</init-param>
+		<init-param>
+			<param-name>intervalForValidingSSOToken1</param-name>
+			<param-value>5000</param-value>
+		</init-param>
+		<init-param>
+			<param-name>ssoServiceWsdlUrl</param-name>
+			<!-- 測試機 <param-value>http://tap0706.most.gov.tw:8080/ORG/service/SSOService?wsdl</param-value> -->
+			<!--正式機 10.170.170.52 -->
+			<param-value>http://soaweb.nstc.gov.tw:8080/ORG/service/SSOService?wsdl</param-value>
+
+		</init-param>
+		<init-param>
+			<param-name>dataServiceWsdlUrl</param-name>
+			<!-- 測試機 <param-value>http://tap0706.most.gov.tw:8080/ORG/service/DataService?wsdl</param-value> -->
+			<!-- 正式機 10.170.170.52 -->
+			<param-value>http://soaweb.nstc.gov.tw:8080/ORG/service/DataService?wsdl</param-value>
+
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>SSOFilter</filter-name>
+		<url-pattern>/getToken1.action</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>QuartzFilter</filter-name>
+		<filter-class>filter.QuartzFilter</filter-class>
+		<init-param>
+			<param-name>enabled</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		<init-param>
+			<param-name>properties</param-name>
+			<param-value>quartz.properties</param-value>
+		</init-param>
+	</filter>
+
+	<!-- Set Character Encoding Filter -->
+	<filter>
+		<filter-name>SetCharacterEncodingFilter</filter-name>
+		<filter-class>filter.SetCharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>SetCharacterEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>authenticateFilter</filter-name>
+		<filter-class>filter.AuthenticateFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>authenticateFilter</filter-name>
+		<url-pattern>/ajax/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>authenticateFilter</filter-name>
+		<url-pattern>/convert/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>authenticateFilter</filter-name>
+		<url-pattern>/exportFolder/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>authenticateFilter</filter-name>
+		<url-pattern>/home/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>authenticateFilter</filter-name>
+		<url-pattern>/pub/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>authenticateFilter</filter-name>
+		<url-pattern>/qry/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>authenticateFilter</filter-name>
+		<url-pattern>/ref/*</url-pattern>
+	</filter-mapping>
+	<!-- <filter-mapping> <filter-name>authenticateFilter</filter-name> <url-pattern>/report/*</url-pattern> 
+		</filter-mapping> -->
+	<filter-mapping>
+		<filter-name>authenticateFilter</filter-name>
+		<url-pattern>/sqlfile/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>authenticateFilter</filter-name>
+		<url-pattern>/sys/*</url-pattern>
+	</filter-mapping>
+	<!-- <filter-mapping> <filter-name>authenticateFilter</filter-name> <url-pattern>/unt/*</url-pattern> 
+		</filter-mapping> -->
+
+	<filter-mapping>
+		<filter-name>authenticateFilter</filter-name>
+		<url-pattern>/downloadFileSimple</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>authenticateFilter</filter-name>
+		<url-pattern>/downloadFile</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>authenticateFilter</filter-name>
+		<url-pattern>/admin</url-pattern>
+	</filter-mapping>
+
+	<!-- servlet ======================================================= -->
+	<servlet>
+		<servlet-name>downloadFileSimple</servlet-name>
+		<servlet-class>util.filestore.FileDownloadSimpleServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>downloadFile</servlet-name>
+		<servlet-class>util.filestore.DownloadFileServlet</servlet-class>
+	</servlet>
+
+	<!-- proxool Configuration -->
+	<servlet>
+		<servlet-name>ServletConfigurator</servlet-name>
+		<servlet-class>
+			org.logicalcobwebs.proxool.configuration.ServletConfigurator</servlet-class>
+		<init-param>
+			<param-name>xmlFile</param-name>
+			<param-value>WEB-INF/proxool.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet>
+		<servlet-name>Admin</servlet-name>
+		<servlet-class>org.logicalcobwebs.proxool.admin.servlet.AdminServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Admin</servlet-name>
+		<url-pattern>/admin</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>downloadFileSimple</servlet-name>
+		<url-pattern>/downloadFileSimple</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>downloadFile</servlet-name>
+		<url-pattern>/downloadFile</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet>
+		<display-name>XFire Servlet</display-name>
+		<servlet-name>XFireServlet</servlet-name>
+
+		<servlet-class>org.codehaus.xfire.spring.XFireSpringServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>XFireServlet</servlet-name>
+		<url-pattern>/xws/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+	    <servlet-name>SwaggerServlet</servlet-name>
+	    <servlet-class>io.swagger.v3.jaxrs2.integration.OpenApiServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>SwaggerServlet</servlet-name>
+	    <url-pattern>/rest/api/api-docs</url-pattern>
+	</servlet-mapping>
+
+	<session-config>
+		<session-timeout>120</session-timeout>
+	</session-config>
+
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
+	<error-page>
+		<error-code>404</error-code>
+		<location>/error.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/error.jsp</location>
+	</error-page>
+	<error-page>
+		<exception-type>java.lang.Exception</exception-type>
+		<location>/error.jsp</location>
+	</error-page>
+
+</web-app>
