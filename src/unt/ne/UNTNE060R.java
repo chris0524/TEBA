@@ -17,11 +17,10 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import sys.web.MyServletContext;
 import util.*;
@@ -478,10 +477,6 @@ public ArrayList queryAll() throws Exception{
 			rowArray[6]=rs.getString("propertyno");
 			rowArray[7]=rs.getString("serialno");
 			objList.add(rowArray);
-//			if (counter==getListLimit()){
-//				setErrorMsg("查詢出來的資料過多,所以僅顯示"+getListLimit()+"筆");
-//				break;
-//			}		
 		}
 		setStateQueryAllSuccess();		
 		if (counter<=0) {								
@@ -494,9 +489,6 @@ public ArrayList queryAll() throws Exception{
 	}
 	return objList;
 }
-
-
-//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 以下不必修改 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 public String getFieldList(String mgrOrg, String userOrg) throws Exception {
 	String sStr = "";
@@ -551,67 +543,71 @@ public void exportAll() throws Exception{
 				strContext += ";;";
 			}					
 		}
-		HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFSheet sheet1 = wb.createSheet("Sheet1");	
-		HSSFRow row;
-		HSSFCell cell;
-		//Print Excel Column 
-		arrContext = strContext.split(";;");
-		for (i=0; i<arrContext.length;i++) {
-			row = sheet1.createRow((short)i);				
-			String[] arrValue = arrContext[i].split(",");
-			for (j=0; j<arrValue.length; j++) {				
-				cell = row.createCell((short)j);
-				//cell.setEncoding(HSSFCell.ENCODING_UTF_16);
-				cell.setCellValue(arrValue[j]);			
+
+		// 使用 XSSFWorkbook 產生 .xlsx
+		try (XSSFWorkbook wb = new XSSFWorkbook()) {
+			Sheet sheet1 = wb.createSheet("Sheet1");	
+			Row row;
+			Cell cell;
+			//Print Excel Column (header)
+			arrContext = strContext.split(";;");
+			int headerRowCount = 0;
+			for (i=0; i<arrContext.length;i++) {
+				row = sheet1.createRow(headerRowCount++);				
+				String[] arrValue = arrContext[i].split(",");
+				for (j=0; j<arrValue.length; j++) {				
+					cell = row.createCell(j);
+					cell.setCellValue(arrValue[j]);			
+				}
+			}		
+
+			if (!"".equals(strEngFields)) {
 				
+				String querySql=this.getExportAllSQL();
+				querySql=getQuerySQL(querySql,1);
+				//Retrive Data
+				String sql = "select distinct " + strFields + " from ("+querySql+") a where 1=1";
+				
+				rs = db.querySQL_NoChange(sql);
+				System.out.println("exportAllSQL :" +sql);
+
+		        String uploadCaseID = new java.rmi.dgc.VMID().toString();
+		        uploadCaseID = uploadCaseID.replaceAll(":","_");		
+				
+		        
+		        ServletContext context = MyServletContext.getInstance().getServletContext();
+		        File tempDirectory = new File(context.getInitParameter("filestoreLocation"));
+				
+		        
+		        tempDirectory = new File(tempDirectory,uploadCaseID);
+				tempDirectory.mkdirs();
+				
+				
+				// 寫入資料列，從 headerRowCount 開始
+				int rowIndex = headerRowCount;
+				count = 0;
+				while (rs.next() && count < 1048575) { // XSSF 上限約 1,048,576 rows；保留最後一列給 header
+					row = sheet1.createRow(rowIndex++);
+					for (j = 0; j < sDestField.length; j++) {
+						cell = row.createCell(j);
+						String value = rs.getString(j+1);
+						cell.setCellValue(value == null ? "" : value);
+					}
+					count++;
+				}
+
+				// 輸出檔案為 .xlsx
+				File outFile = new File(tempDirectory.getAbsoluteFile(), getFileName() + ".xlsx");
+				try (FileOutputStream fout = new FileOutputStream(outFile)) {
+					wb.write(fout);
+					fout.flush();
+				}
+				
+				this.setExcelFileName(outFile.getAbsolutePath());
+				
+				super.setState("exportAll");			
 			}
-		}		
-		
-		
-		if (!"".equals(strEngFields)) {
-			
-			String querySql=this.getExportAllSQL();
-			querySql=getQuerySQL(querySql,1);
-			//Retrive Data
-			String sql = "select distinct " + strFields + " from ("+querySql+") a where 1=1";
-			
-			rs = db.querySQL_NoChange(sql);
-			System.out.println("exportAllSQL :" +sql);
-
-	        String uploadCaseID = new java.rmi.dgc.VMID().toString();
-	        uploadCaseID = uploadCaseID.replaceAll(":","_");		
-			
-	        
-	        ServletContext context = MyServletContext.getInstance().getServletContext();
-	        File tempDirectory = new File(context.getInitParameter("filestoreLocation"));
-			
-	        
-	        tempDirectory = new File(tempDirectory,uploadCaseID);
-			tempDirectory.mkdirs();
-			
-			
-//			while (rs.next()&&count<65535){
-//				row = sheet1.createRow(i); //動產轉型為(short)i  只能顯示到32768 EXCEL可以顯示到65536
-//				for (j=0; j<sDestField.length; j++) {
-//					cell = row.createCell((short)j);
-//				//	cell.setEncoding(HSSFCell.ENCODING_UTF_16);
-//					cell.setCellValue(rs.getString(j+1));	
-//				}
-//				i++;
-//				count++;
-//			}
-
-			
-			FileOutputStream fout = new FileOutputStream(tempDirectory.getAbsoluteFile()+File.separator+getFileName()+".xls");			
-			wb.write(fout);
-			fout.flush();
-			fout.close();
-			
-			this.setExcelFileName(tempDirectory.getAbsoluteFile()+File.separator+getFileName()+".xls");
-			
-			super.setState("exportAll");			
-		}
+		} // wb 自動關閉
 	} catch (Exception e) {
 		e.printStackTrace();
 	} finally {
